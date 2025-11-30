@@ -10,7 +10,7 @@ from app.model import SentimentAnalyzer
 
 app = FastAPI(title="Анализатор тональности отзывов")
 
-#CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,25 +18,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#подключение статических файлов
+# подключение статических файлов
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-#загрузка модели
+# загрузка модели
 print("запуск сервера...")
 analyzer = SentimentAnalyzer()
-#обучение модели
-#try:
-    #analyzer.train("data/train.csv")
-#except Exception as e:
-    #print(f"не удалось обучить модель: {e}")
+# ЗАКОММЕНТИРУЙ обучение - файла train.csv нет на сервере!
+# try:
+#     analyzer.train("data/train.csv")
+# except Exception as e:
+#     print(f"не удалось обучить модель: {e}")
 
 
-#@app.post("/analyze/")
-#async def analyze_file(file: UploadFile = File(...)):
-    #try:
-        #print(f"получен файл: {file.filename}")
+@app.post("/analyze/")
+async def analyze_file(file: UploadFile = File(...)):
+    try:
+        print(f"получен файл: {file.filename}")
 
-        #чтение файла
+        # чтение файла
         contents = await file.read()
         df = pd.read_csv(io.StringIO(contents.decode('utf-8')))
 
@@ -60,10 +60,10 @@ analyzer = SentimentAnalyzer()
             "positive": predictions.count(2)
         }
 
-        #график
+        # график
         plot_filename = create_visualization(stats)
 
-        #Сохр результат
+        # Сохр результат
         output_filename = "result.csv"
         df.to_csv(output_filename, index=False)
 
@@ -111,6 +111,5 @@ def create_visualization(stats):
     plot_filename = "sentiment_plot.png"
     plt.savefig(f"static/{plot_filename}", dpi=100, bbox_inches='tight')
     plt.close()
-
 
     return plot_filename
