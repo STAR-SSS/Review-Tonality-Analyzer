@@ -25,16 +25,16 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 print("запуск сервера...")
 analyzer = SentimentAnalyzer()
 #обучение модели
-try:
-    analyzer.train("data/train.csv")
-except Exception as e:
-    print(f"не удалось обучить модель: {e}")
+#try:
+    #analyzer.train("data/train.csv")
+#except Exception as e:
+    #print(f"не удалось обучить модель: {e}")
 
 
-@app.post("/analyze/")
-async def analyze_file(file: UploadFile = File(...)):
-    try:
-        print(f"получен файл: {file.filename}")
+#@app.post("/analyze/")
+#async def analyze_file(file: UploadFile = File(...)):
+    #try:
+        #print(f"получен файл: {file.filename}")
 
         #чтение файла
         contents = await file.read()
@@ -111,5 +111,6 @@ def create_visualization(stats):
     plot_filename = "sentiment_plot.png"
     plt.savefig(f"static/{plot_filename}", dpi=100, bbox_inches='tight')
     plt.close()
+
 
     return plot_filename
